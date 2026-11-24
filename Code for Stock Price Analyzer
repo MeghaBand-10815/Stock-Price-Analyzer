@@ -1,0 +1,305 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+
+    static ArrayList<Double> prices = new ArrayList<>();
+    static Scanner sc = new Scanner(System.in);
+
+    static final String FILE_NAME = "prices.txt";
+
+    // Load prices from file
+    static void loadPrices() {
+        try {
+            File file = new File(FILE_NAME);
+
+            if (file.exists()) {
+                Scanner fileScanner = new Scanner(file);
+
+                while (fileScanner.hasNextDouble()) {
+                    prices.add(fileScanner.nextDouble());
+                }
+
+                fileScanner.close();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error loading file.");
+        }
+    }
+
+    // Save prices to file
+    static void savePrices() {
+        try {
+            PrintWriter writer = new PrintWriter(FILE_NAME);
+
+            for (double price : prices) {
+                writer.println(price);
+            }
+
+            writer.close();
+
+        } catch (Exception e) {
+            System.out.println("Error saving file.");
+        }
+    }
+
+    // Add a new stock price
+    static void addPrice() {
+        System.out.print("Enter stock price: ");
+
+        String input = sc.nextLine();
+
+        try {
+            double price = Double.parseDouble(input);
+
+            if (price > 0 && Double.isFinite(price)) {
+                prices.add(price);
+
+                System.out.println("Price added.");
+                System.out.printf("Day %d: %.2f%n", prices.size(), price);
+
+            } else {
+                System.out.println(
+                    "Invalid price. Enter a positive number."
+                );
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println(
+                "Invalid price. Enter a positive number."
+            );
+        }
+    }
+
+    // Display all stock prices
+    static void displayPrices() {
+        if (prices.isEmpty()) {
+            System.out.println("No prices available.");
+            return;
+        }
+
+        for (int i = 0; i < prices.size(); i++) {
+            System.out.printf(
+                "Day %d: %.2f%n",
+                i + 1,
+                prices.get(i)
+            );
+        }
+    }
+
+    // Analyze stock prices
+    static void analyzePrices() {
+        if (prices.isEmpty()) {
+            System.out.println("No prices available.");
+            return;
+        }
+
+        double highest = prices.get(0);
+        double lowest = prices.get(0);
+        double sum = 0;
+
+        int highestDay = 1;
+        int lowestDay = 1;
+
+        for (int i = 0; i < prices.size(); i++) {
+            double price = prices.get(i);
+
+            if (price > highest) {
+                highest = price;
+                highestDay = i + 1;
+            }
+
+            if (price < lowest) {
+                lowest = price;
+                lowestDay = i + 1;
+            }
+
+            sum += price;
+        }
+
+        double average = sum / prices.size();
+
+        System.out.printf(
+            "Highest: %.2f (Day %d)%n",
+            highest, highestDay
+        );
+
+        System.out.printf(
+            "Lowest: %.2f (Day %d)%n",
+            lowest, lowestDay
+        );
+
+        System.out.printf(
+            "Average: %.2f%n",
+            average
+        );
+    }
+
+    // Sort prices using Bubble Sort
+    static void sortPrices() {
+        if (prices.isEmpty()) {
+            System.out.println("No prices available.");
+            return;
+        }
+
+        ArrayList<Double> sortedPrices =
+            new ArrayList<>(prices);
+
+        for (int i = 0; i < sortedPrices.size() - 1; i++) {
+
+            for (int j = 0;
+                 j < sortedPrices.size() - 1 - i;
+                 j++) {
+
+                if (sortedPrices.get(j) >
+                    sortedPrices.get(j + 1)) {
+
+                    double temp = sortedPrices.get(j);
+
+                    sortedPrices.set(
+                        j,
+                        sortedPrices.get(j + 1)
+                    );
+
+                    sortedPrices.set(j + 1, temp);
+                }
+            }
+        }
+
+        System.out.print("Sorted prices: ");
+
+        for (int i = 0; i < sortedPrices.size(); i++) {
+            System.out.printf("%.2f", sortedPrices.get(i));
+
+            if (i < sortedPrices.size() - 1) {
+                System.out.print(", ");
+            }
+        }
+
+        System.out.println();
+    }
+
+    // Binary Search
+    static void binarySearchPrice() {
+        if (prices.isEmpty()) {
+            System.out.println("No prices available.");
+            return;
+        }
+
+        System.out.print("Enter price to search: ");
+
+        String input = sc.nextLine();
+
+        double target;
+
+        try {
+            target = Double.parseDouble(input);
+
+            if (target <= 0 || !Double.isFinite(target)) {
+                System.out.println("Invalid price.");
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid price.");
+            return;
+        }
+
+        // Create sorted copy for binary search
+        ArrayList<Double> sortedPrices =
+            new ArrayList<>(prices);
+
+        Collections.sort(sortedPrices);
+
+        int low = 0;
+        int high = sortedPrices.size() - 1;
+
+        while (low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            double midPrice = sortedPrices.get(mid);
+
+            if (midPrice == target) {
+                System.out.printf(
+                    "Price %.2f found at position %d%n",
+                    target,
+                    mid + 1
+                );
+
+                return;
+            }
+
+            if (midPrice < target) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        System.out.println("Price not found.");
+    }
+
+    // Main method
+    public static void main(String[] args) {
+
+        loadPrices();
+
+        int choice;
+
+        do {
+            System.out.println("\n===== STOCK PRICE ANALYZER =====");
+            System.out.println("1. Add Price");
+            System.out.println("2. Display Prices");
+            System.out.println("3. Analysis");
+            System.out.println("4. Sort Prices");
+            System.out.println("5. Binary Search");
+            System.out.println("6. Save and Exit");
+
+            System.out.print("Enter your choice: ");
+
+            String input = sc.nextLine();
+
+            try {
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                choice = 0;
+            }
+
+            switch (choice) {
+
+                case 1:
+                    addPrice();
+                    break;
+
+                case 2:
+                    displayPrices();
+                    break;
+
+                case 3:
+                    analyzePrices();
+                    break;
+
+                case 4:
+                    sortPrices();
+                    break;
+
+                case 5:
+                    binarySearchPrice();
+                    break;
+
+                case 6:
+                    savePrices();
+                    System.out.println("Data saved. Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid menu choice.");
+            }
+
+        } while (choice != 6);
+
+        sc.close();
+    }
+}
