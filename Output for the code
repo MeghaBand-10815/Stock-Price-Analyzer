@@ -1,0 +1,19 @@
+INPUT                                            EXPECTED OUTPUT 
+Test Case 1: Normal Input                  
+Menu option 1 (Add price)                       Price added. Day 1: 150.50 
+Price: 150.50                                  
+
+Test Case 2: Boundary / Minimum Input
+Only one price (150.50) stored                  Highest: 150.50 | Lowest: 150.50
+Menu option 3 (Analysis)                        Average: 150.50 
+
+Test Case 3: Invalid Input 
+Menu option 1 
+Price: abc                                      Invalid price. Enter a positive number. 
+
+Test Case 4: Different Valid Scenario 
+Prices: Day 1 = 150.50, Day 2 = 165.25,         (a) Highest: 165.25 (Day 2) | Lowest: 140.00 (Day 3) 
+Day 3 = 140.00                                      Average: 151.92
+(a) Option 3 (Analysis)                         (b) 140.00, 150.50, 165.25
+(b) Option 4 (Sort ascending)                   (c) Price 150.50 found at position 2 
+(c) Option 5 (Binary search): 150.50                
